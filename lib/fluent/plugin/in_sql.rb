@@ -190,6 +190,13 @@ module Fluent
         :socket => @socket,
       }
 
+	  log.warn "adapter database '#{@adapter}'"
+	  log.warn "host database '#{@host}'"
+	  log.warn "port database '#{@port}'"
+	  log.warn "database database '#{@database}'"
+	  log.warn "username database '#{@username}'"
+	  log.warn "password database '#{@password}'"
+	  log.warn "socket database '#{@socket}'"
       # creates subclass of ActiveRecord::Base so that it can have different
       # database configuration from ActiveRecord::Base.
       @base_model = Class.new(ActiveRecord::Base) do
@@ -204,6 +211,8 @@ module Fluent
 
       # Now base_model can have independent configuration from ActiveRecord::Base
       @base_model.establish_connection(config)
+	  
+	  log.warn "First connect to database '#{@base_model.connection.active}'====."
 
       if @all_tables
         # get list of tables from the database
