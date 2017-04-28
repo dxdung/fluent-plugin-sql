@@ -127,6 +127,7 @@ module Fluent
         relation = relation.order("#{@update_column} ASC")
         relation = relation.limit(limit) if limit > 0
 
+        log.warn "last record '#{last_record[@update_column]}'"
         now = Engine.now
 
         me = MultiEventStream.new
@@ -178,6 +179,7 @@ module Fluent
     SKIP_TABLE_REGEXP = /\Aschema_migrations\Z/i
 
     def start
+      super
       @state_store = @state_file.nil? ? MemoryStateStore.new : StateStore.new(@state_file)
 
       config = {
@@ -230,14 +232,16 @@ module Fluent
       end
 
       @stop_flag = false
-      log.warn "exit stop_flag false ============"
+      log.warn "stop_flag false ============"
       @thread = Thread.new(&method(:thread_main))
+      log.warn "Thread ============"
     end
 
     def shutdown
       @stop_flag = true
       log.warn "Waiting for thread to finish"
       @thread.join
+      super
     end
 
     def thread_main
