@@ -211,8 +211,6 @@ module Fluent
 
       # Now base_model can have independent configuration from ActiveRecord::Base
       @base_model.establish_connection(config)
-	  
-	  log.warn "First connect to database '#{@base_model.connection.active}'====."
 
       if @all_tables
         # get list of tables from the database
