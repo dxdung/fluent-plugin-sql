@@ -190,13 +190,13 @@ module Fluent
         :socket => @socket,
       }
 
-	  log.warn "adapter database '#{@adapter}'"
-	  log.warn "host database '#{@host}'"
-	  log.warn "port database '#{@port}'"
-	  log.warn "database database '#{@database}'"
-	  log.warn "username database '#{@username}'"
-	  log.warn "password database '#{@password}'"
-	  log.warn "socket database '#{@socket}'"
+      log.warn "adapter database '#{@adapter}'"
+      log.warn "host database '#{@host}'"
+      log.warn "port database '#{@port}'"
+      log.warn "database database '#{@database}'"
+      log.warn "username database '#{@username}'"
+      log.warn "password database '#{@password}'"
+      log.warn "socket database '#{@socket}'"
       # creates subclass of ActiveRecord::Base so that it can have different
       # database configuration from ActiveRecord::Base.
       @base_model = Class.new(ActiveRecord::Base) do
@@ -211,36 +211,22 @@ module Fluent
 
       # Now base_model can have independent configuration from ActiveRecord::Base
       @base_model.establish_connection(config)
-
-      if @all_tables
-        # get list of tables from the database
-        @tables = @base_model.connection.tables.map do |table_name|
-          if table_name.match(SKIP_TABLE_REGEXP)
-            # some tables such as "schema_migrations" should be ignored
-            nil
-          else
-            te = TableElement.new
-            te.configure({
-              'table' => table_name,
-              'tag' => table_name,
-              'update_column' => nil,
-            })
-            te
-          end
-        end.compact
-      end
+      
 
       # ignore tables if TableElement#init failed
       @tables.reject! do |te|
         begin
+          log.warn "Before '#{te.table}' table"
+          log.warn "Before '#{te.update_column}' column"
           te.init(@tag_prefix, @base_model, router)
-          log.info "Selecting '#{te.table}' table"
+          log.warn "After '#{te.table}' table"
           false
         rescue => e
           log.warn "Can't handle '#{te.table}' table. Ignoring.", :error => e.message, :error_class => e.class
           log.warn_backtrace e.backtrace
           true
         end
+      log.warn "end start======"
       end
 
       @stop_flag = false
@@ -249,7 +235,7 @@ module Fluent
 
     def shutdown
       @stop_flag = true
-      $log.debug "Waiting for thread to finish"
+      log.warn "Waiting for thread to finish"
       @thread.join
     end
 
@@ -263,11 +249,14 @@ module Fluent
         rescue => e
           log.warn "can't connect to database. Reconnect at next try"
           next
+		log.warn "thread ============"
         end
 
         @tables.each do |t|
           begin
+            log.warn "Before foreach in thread"
             last_record = @state_store.last_records[t.table]
+			log.warn "Last record '#{last_record}'"
             @state_store.last_records[t.table] = t.emit_next_records(last_record, @select_limit)
             @state_store.update!
           rescue => e
