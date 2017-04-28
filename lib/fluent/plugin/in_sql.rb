@@ -230,6 +230,7 @@ module Fluent
       end
 
       @stop_flag = false
+      log.warn "exit stop_flag false ============"
       @thread = Thread.new(&method(:thread_main))
     end
 
@@ -249,14 +250,14 @@ module Fluent
         rescue => e
           log.warn "can't connect to database. Reconnect at next try"
           next
-		log.warn "thread ============"
+        log.warn "thread ============"
         end
 
         @tables.each do |t|
           begin
             log.warn "Before foreach in thread"
             last_record = @state_store.last_records[t.table]
-			log.warn "Last record '#{last_record}'"
+            log.warn "Last record '#{last_record}'"
             @state_store.last_records[t.table] = t.emit_next_records(last_record, @select_limit)
             @state_store.update!
           rescue => e
@@ -265,6 +266,7 @@ module Fluent
           end
         end
       end
+      log.warn "exit thread ============"
     end
 
     class StateStore
