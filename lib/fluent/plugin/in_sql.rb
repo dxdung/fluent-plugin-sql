@@ -77,7 +77,6 @@ module Fluent
       def init(tag_prefix, base_model, router)
         @router = router
         @tag = "#{tag_prefix}.#{@tag}" if tag_prefix
-        log.warn "init '#{@tag}'======"
         # creates a model for this table
         table_name = @table
         primary_key = @primary_key
@@ -127,7 +126,6 @@ module Fluent
         relation = relation.order("#{@update_column} ASC")
         relation = relation.limit(limit) if limit > 0
 
-        log.warn "last record '#{last_record[@update_column]}'"
         now = Engine.now
 
         me = MultiEventStream.new
