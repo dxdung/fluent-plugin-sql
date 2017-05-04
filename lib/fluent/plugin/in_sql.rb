@@ -210,7 +210,13 @@ module Fluent
       SQLInput.const_set("BaseModel_#{rand(1 << 31)}", @base_model)
 
       # Now base_model can have independent configuration from ActiveRecord::Base
-      @base_model.establish_connection(config)
+      @base_model.establish_connection(
+        adapter:  @adapter,
+        host:     @host,
+        username: @username,
+        password: @password,
+        database: @database
+        )
       
 
       # ignore tables if TableElement#init failed
