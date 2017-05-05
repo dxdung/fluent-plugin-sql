@@ -193,14 +193,12 @@ module Fluent
 
       # Now base_model can have independent configuration from ActiveRecord::Base
       @base_model.establish_connection(config)
-      begin
-          conn = @base_model.connection
-          log.warn "View current DB '#{conn.current_database}'"
-          conn.active? || conn.reconnect!
-        rescue => e
-          log.warn "can't connect to database111. Reconnect at next try '#{conn.current_database}'"
+      conn = PGconn.connect("indeed-postgres-dung", 5432, '', '', "testdb", "postgres", "")
+      res  = conn.exec('select * from company')
+      
+      res.each do |row|
+        puts row['tablename'] + ' | ' + row['tableowner']
       end
-      log.warn "out of begin end statement"
       
       # ignore tables if TableElement#init failed
       @tables.reject! do |te|
