@@ -227,7 +227,6 @@ module Fluent
         log.warn "Thread main waiting interval==============="
         sleep @select_interval
         log.warn "After select interval"
-
         begin
           conn = @base_model.connection
           conn.active? || conn.reconnect!
@@ -237,6 +236,7 @@ module Fluent
         end
         log.warn "Connect to database ============"
         @tables.each do |t|
+          log.warn "inside '#{t.table}' ============"
           begin
             log.warn "Before foreach in thread"
             last_record = @state_store.last_records[t.table]
@@ -247,7 +247,9 @@ module Fluent
             log.error "unexpected error", :error => e.message, :error_class => e.class
             log.error_backtrace e.backtrace
           end
+        sleep @select_interval
         end
+      log.warn "After select interval lần 2============="
       end
       log.warn "exit thread ============"
     end
