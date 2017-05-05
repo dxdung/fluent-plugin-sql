@@ -159,6 +159,7 @@ module Fluent
     SKIP_TABLE_REGEXP = /\Aschema_migrations\Z/i
 
     def start
+      super
       @state_store = @state_file.nil? ? MemoryStateStore.new : StateStore.new(@state_file)
 
       config = {
@@ -216,6 +217,7 @@ module Fluent
     end
 
     def shutdown
+      super
       @stop_flag = true
       log.warn "stop flag is set to true================="
       @thread.join
@@ -235,6 +237,7 @@ module Fluent
           next
         end
         log.warn "Connect to database ============"
+        sleep 60
         @tables.each do |t|
           log.warn "inside '#{t.table}' ============"
           begin
@@ -247,9 +250,9 @@ module Fluent
             log.error "unexpected error", :error => e.message, :error_class => e.class
             log.error_backtrace e.backtrace
           end
-        sleep @select_interval
         end
       log.warn "After select interval lần 2============="
+      sleep 120
       end
       log.warn "exit thread ============"
     end
