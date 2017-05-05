@@ -211,22 +211,23 @@ module Fluent
       end
 
       @stop_flag = false
-      log.warn "stop_flag false ============"
+      log.warn "stop_flag is set to false ============"
       @thread = Thread.new(&method(:thread_main))
       log.warn "Thread ============"
     end
 
     def shutdown
       @stop_flag = true
-      log.warn "Waiting for thread to finish"
+      log.warn "stop flag is set to true================="
       @thread.join
+      log.warn "Thread Joined================"
     end
 
     def thread_main
       until @stop_flag
-        log.warn "thread main"
+        log.warn "Thread main waiting interval==============="
         sleep @select_interval
-        log.warn "select interval"
+        log.warn "After select interval"
 
         begin
           conn = @base_model.connection
@@ -234,9 +235,8 @@ module Fluent
         rescue => e
           log.warn "can't connect to database. Reconnect at next try"
           next
-        log.warn "thread ============"
         end
-        
+        log.warn "Connect to database ============"
         conn = PGconn.connect("indeed-postgres-dung", 5432, '', '', "testdb", "postgres", "")
               res  = conn.exec('select * from company')
               
