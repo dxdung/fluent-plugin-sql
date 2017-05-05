@@ -220,7 +220,6 @@ module Fluent
       @stop_flag = true
       log.warn "Waiting for thread to finish"
       @thread.join
-      super
     end
 
     def thread_main
