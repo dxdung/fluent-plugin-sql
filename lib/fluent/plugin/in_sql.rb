@@ -236,13 +236,14 @@ module Fluent
           next
         end
         log.warn "Connect to database ============"
+        sleep @select_interval
         conn = PGconn.connect("indeed-postgres-dung", 5432, '', '', "testdb", "postgres", "")
               res  = conn.exec('select * from company')
               
               res.each do |row|
                 puts row['id'] + ' | ' + row['name']
          end
-         
+        sleep @select_interval
         @tables.each do |t|
           begin
             log.warn "Before foreach in thread"
