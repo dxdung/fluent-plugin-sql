@@ -1,21 +1,3 @@
-#
-# Fluent
-#
-# Copyright (C) 2013 FURUHASHI Sadayuki
-#
-#    Licensed under the Apache License, Version 2.0 (the "License");
-#    you may not use this file except in compliance with the License.
-#    You may obtain a copy of the License at
-#
-#        http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS,
-#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#    See the License for the specific language governing permissions and
-#    limitations under the License.
-#
-
 require "fluent/input"
 
 module Fluent
@@ -210,15 +192,17 @@ module Fluent
       SQLInput.const_set("BaseModel_#{rand(1 << 31)}", @base_model)
 
       # Now base_model can have independent configuration from ActiveRecord::Base
-      @base_model.establish_connection(
-        adapter:  @adapter,
-        host:     @host,
-        username: @username,
-        password: @password,
-        database: @database
-        )
+      @base_model.establish_connection(config)
+      begin
+          conn = @base_model.connection
+          log.warn "View current DB '#{conn.current_database}'"
+          conn.active? || conn.reconnect!
+        rescue => e
+          log.warn "can't connect to database111. Reconnect at next try '#{conn.current_database}'"
+          next
+      end
+      log.warn "out of begin end statement"
       
-
       # ignore tables if TableElement#init failed
       @tables.reject! do |te|
         begin
