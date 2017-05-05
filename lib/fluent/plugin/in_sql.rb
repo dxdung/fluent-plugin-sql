@@ -193,12 +193,6 @@ module Fluent
 
       # Now base_model can have independent configuration from ActiveRecord::Base
       @base_model.establish_connection(config)
-      conn = PGconn.connect("indeed-postgres-dung", 5432, '', '', "testdb", "postgres", "")
-      res  = conn.exec('select * from company')
-      
-      res.each do |row|
-        puts row['tablename'] + ' | ' + row['tableowner']
-      end
       
       # ignore tables if TableElement#init failed
       @tables.reject! do |te|
@@ -243,7 +237,14 @@ module Fluent
           next
         log.warn "thread ============"
         end
-
+        
+        conn = PGconn.connect("indeed-postgres-dung", 5432, '', '', "testdb", "postgres", "")
+              res  = conn.exec('select * from company')
+              
+              res.each do |row|
+                puts row['id'] + ' | ' + row['name']
+         end
+         
         @tables.each do |t|
           begin
             log.warn "Before foreach in thread"
