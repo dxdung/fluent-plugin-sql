@@ -199,7 +199,6 @@ module Fluent
           conn.active? || conn.reconnect!
         rescue => e
           log.warn "can't connect to database111. Reconnect at next try '#{conn.current_database}'"
-          next
       end
       log.warn "out of begin end statement"
       
