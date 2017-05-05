@@ -159,7 +159,6 @@ module Fluent
     SKIP_TABLE_REGEXP = /\Aschema_migrations\Z/i
 
     def start
-      super
       @state_store = @state_file.nil? ? MemoryStateStore.new : StateStore.new(@state_file)
 
       config = {
