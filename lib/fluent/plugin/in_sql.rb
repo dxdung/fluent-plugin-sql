@@ -225,7 +225,7 @@ module Fluent
     end
 
     def thread_main
-      until @stop_flag
+      #until @stop_flag
         log.warn "Thread main waiting interval==============="
         sleep @select_interval
         log.warn "After select interval"
@@ -236,7 +236,7 @@ module Fluent
           log.warn "can't connect to database. Reconnect at next try"
           next
         end
-        log.warn "Connect to database ============"
+        log.warn "Connected to database ============"
         sleep 60
         @tables.each do |t|
           log.warn "inside '#{t.table}' ============"
@@ -252,9 +252,9 @@ module Fluent
           end
         end
       log.warn "After select interval lần 2============="
-      sleep 120
-      end
-      log.warn "exit thread ============"
+      sleep 60
+      #end
+      #log.warn "exit thread ============"
     end
 
     class StateStore
