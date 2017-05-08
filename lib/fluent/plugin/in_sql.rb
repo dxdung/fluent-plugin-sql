@@ -225,19 +225,20 @@ module Fluent
     end
 
     def thread_main
-      #until @stop_flag
+      until @stop_flag
         log.warn "Thread main waiting interval==============="
-        sleep @select_interval
+        #sleep 120
         log.warn "After select interval"
         begin
           conn = @base_model.connection
           conn.active? || conn.reconnect!
         rescue => e
           log.warn "can't connect to database. Reconnect at next try"
+          sleep 60
           next
         end
         log.warn "Connected to database ============"
-        sleep 60
+        #sleep 60
         @tables.each do |t|
           log.warn "inside '#{t.table}' ============"
           begin
@@ -252,8 +253,8 @@ module Fluent
           end
         end
       log.warn "After select interval lần 2============="
-      sleep 60
-      #end
+      sleep 120
+      end
       #log.warn "exit thread ============"
     end
 
