@@ -228,20 +228,7 @@ module Fluent
       until @stop_flag
         log.warn "Thread main waiting interval==============="
         #sleep 120
-        log.warn "After select interval"
-        
-        begin
-          conn = PGconn.connect("indeed-postgres-dung", 5432, '', '', "testdb", "postgres", "")
-          res  = conn.exec('select id, name from company')
-          res.each do |row|
-            puts row['id'] + ' | ' + row['name']
-          end
-        rescue PG::Error => e
-            puts e.message 
-        ensure
-            rs.clear if rs
-            con.close if con
-        end
+        #log.warn "After select interval"
         
         begin
           conn = @base_model.connection
@@ -249,8 +236,12 @@ module Fluent
         rescue => e
           log.warn "can't connect to database. Reconnect at next try"
           sleep 60
-          next
+          #next
+        ensure
+          conn.close if conn
+          log.warn "closed connection"
         end
+        
         log.warn "Connected to database ============"
         #sleep 60
         @tables.each do |t|
