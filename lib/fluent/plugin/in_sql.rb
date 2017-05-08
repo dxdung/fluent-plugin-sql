@@ -150,7 +150,10 @@ module Fluent
         te.configure(e)
         te
       }
-
+      
+      begin
+      puts "print all tables 1: #@tables"
+      end
       if config['all_tables']
         @all_tables = true
       end
@@ -197,17 +200,16 @@ module Fluent
       # ignore tables if TableElement#init failed
       @tables.reject! do |te|
         begin
-          log.warn "Before '#{te.table}' table"
-          log.warn "Before '#{te.update_column}' column"
           te.init(@tag_prefix, @base_model, router)
-          log.warn "After '#{te.table}' table"
-          #false
+          false
         rescue => e
           log.warn "Can't handle '#{te.table}' table. Ignoring.", :error => e.message, :error_class => e.class
           log.warn_backtrace e.backtrace
-          #true
+          true
         end
-      log.warn "end start======"
+      end
+      begin
+         puts "print all tables 2: #@tables"
       end
 
       @stop_flag = false
@@ -239,6 +241,9 @@ module Fluent
         
         log.warn "Connected to database ============"
         #sleep 60
+        begin
+           puts "print all tables 3: #@tables"
+        end
         @tables.each do |t|
           log.warn "inside '#{t.table}' ============"
           begin
@@ -252,7 +257,9 @@ module Fluent
             log.error_backtrace e.backtrace
           end
         end
-        log.warn "After select interval lần 2============="
+        begin
+            puts "print all tables 4: #@tables"
+        end
         if conn
            conn.close
           log.warn "Closed connection============="
