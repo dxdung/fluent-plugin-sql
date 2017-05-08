@@ -201,11 +201,11 @@ module Fluent
           log.warn "Before '#{te.update_column}' column"
           te.init(@tag_prefix, @base_model, router)
           log.warn "After '#{te.table}' table"
-          false
+          #false
         rescue => e
           log.warn "Can't handle '#{te.table}' table. Ignoring.", :error => e.message, :error_class => e.class
           log.warn_backtrace e.backtrace
-          true
+          #true
         end
       log.warn "end start======"
       end
@@ -229,17 +229,12 @@ module Fluent
         log.warn "Thread main waiting interval==============="
         #sleep 120
         #log.warn "After select interval"
-        
+        conn = @base_model.connection
         begin
-          conn = @base_model.connection
           conn.active? || conn.reconnect!
         rescue => e
           log.warn "can't connect to database. Reconnect at next try"
-          sleep 60
-          #next
-        ensure
-          conn.close if conn
-          log.warn "closed connection"
+          next
         end
         
         log.warn "Connected to database ============"
@@ -257,8 +252,12 @@ module Fluent
             log.error_backtrace e.backtrace
           end
         end
-      log.warn "After select interval lần 2============="
-      sleep 120
+        log.warn "After select interval lần 2============="
+        if conn
+           conn.close
+          log.warn "Closed connection============="
+        end
+        sleep 120
       end
       #log.warn "exit thread ============"
     end
